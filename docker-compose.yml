@@ -1,0 +1,29 @@
+version: '3'
+
+networks:
+  registry-ui-net:
+
+services:
+  docker-registry:
+    image: registry:2.7
+    container_name: docker-registry
+    ports:
+      - "5000:5000"
+    restart: always
+    volumes:
+      - ./data:/var/lib/registry
+    networks:
+      - registry-ui-net
+  
+  docker-registry-ui:
+    image: joxit/docker-registry-ui:static
+    container_name: docker-registry-ui
+    ports:
+      - "80:80"
+    environment:
+      - REGISTRY_URL=http://docker-registry:5000
+      - REGISTRY_TITLE=My Private Docker Registry
+    depends_on:
+      - docker-registry    
+    networks:
+     - registry-ui-net
